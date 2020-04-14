@@ -8,6 +8,7 @@ library(lubridate)
 
 base_url <- "https://www.clinicalTrials.gov/api/query/study_fields?fmt=JSON&expr=${expr}&min_rnk=${min_rnk}&max_rnk=${max_rnk}&fields=${fields}"
 
+# Gets data from API and returns them after wrangling
 get_studies <- function() {
   
   expr <- "COVID-19"
@@ -22,8 +23,13 @@ get_studies <- function() {
                             str_remove_all("\n") %>% 
                             fromJSON(flatten = TRUE)
   
+  # Getting the dataframe which is nested in the response
   study_fields_df <- study_fields_response$StudyFieldsResponse$StudyFields
   
+  # Data wrangling
+  # Values that are vectors are flattened to strings
+  # All columns need to be unlisted: unlist used twice as Date re-introduces a list
+  # Dates of the type month-year are converted to 1-month-year
   studies <- study_fields_df %>% 
                   rename(Country = LocationCountry) %>% 
                   mutate(Country = map(Country,unique)) %>% 
@@ -36,6 +42,7 @@ get_studies <- function() {
                   run_on_df(unlist)
 }
 
+# Runs a given function on all columns of a dataframe
 run_on_df <- function(df,func) {
   for (i in seq_along(df)) {
     df[[i]] <- func(df[[i]])
@@ -43,6 +50,7 @@ run_on_df <- function(df,func) {
   df
 }
 
+# Concatenates vector data
 conc_or_repl <- function(x) {
   if(identical(x,character(0))) {
     "No data"
