@@ -5,6 +5,7 @@ library(dplyr)
 library(ggplot2)
 library(data.table)
 library(lubridate)
+library(purrr)
 
 base_url <- "https://www.clinicalTrials.gov/api/query/study_fields?fmt=JSON&expr=${expr}&min_rnk=${min_rnk}&max_rnk=${max_rnk}&fields=${fields}"
 
