@@ -12,7 +12,7 @@ function(input, output) {
   
   output$plot <- renderPlot({
     
-    if(type()=="StartDate") {
+    if(type()=="StartMonth") {
       studies %>% group_by_at(vars(type())) %>%
         summarise(count = n()) %>% 
         ggplot() +
