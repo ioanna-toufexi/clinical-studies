@@ -38,7 +38,7 @@ get_studies <- function() {
                   run_on_df(unlist) %>% 
                   mutate(StartDate = ifelse(str_detect(StartDate, ","),StartDate,str_replace(StartDate, " ", " 1, "))) %>% 
                   mutate(StartDate = as.Date(StartDate, format="%B %d, %Y")) %>%
-                  filter(StartDate > as.Date("31/12/2019", format="%d/%m/%Y")) %>% 
+                  filter(StartDate > as.Date("31/12/2019", format="%d/%m/%Y")) %>% #TODO more robust solution
                   mutate(StartMonth = lubridate::month(as_date(StartDate),label = TRUE)) %>% 
                   run_on_df(unlist)
 }
