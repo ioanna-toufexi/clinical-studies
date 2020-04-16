@@ -9,7 +9,6 @@ fluidPage(
   titlePanel("Demo Shiny app"),
   
   mainPanel(
-    h3("Number of clinical studies related to COVID-19 that started/will start in 2020, per starting month"),
     p(attribution),
     p("Disclaimer:"),
     p("1) This is for demo purposes only."),

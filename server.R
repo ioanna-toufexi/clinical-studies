@@ -12,9 +12,10 @@ function(input, output) {
       summarise(count = n()) %>% 
       ggplot() +
       geom_bar(aes(x = StartMonth,
-                   y = count), stat = "identity") +
+                   y = count), fill="blue", stat = "identity") +
       theme_minimal() +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs(y= "number of studies", x = "month (2020)", title = "Number of clinical studies related to COVID-19 per starting month (2020)")
   })
   
 }
