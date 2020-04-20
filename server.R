@@ -12,6 +12,7 @@ function(input, output) {
   
   output$plot <- renderPlot({
     
+    #TODO add empty months
     if(type()=="StartMonth") {
       studies %>% group_by(StartMonth) %>%
         summarise(count = n()) %>% 
