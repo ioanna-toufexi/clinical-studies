@@ -18,7 +18,7 @@ fluidPage(
 
     sidebarPanel(
       radioButtons(
-        inputId='type', label='Choose variable', choiceNames=list("Start Month", "Country"), choiceValues=list("StartMonth", "Country")
+        inputId='type', label='Choose variable', choiceNames=list("Start month", "Country"), choiceValues=list("StartMonth", "Country")
       )
     ),
   mainPanel(

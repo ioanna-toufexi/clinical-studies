@@ -29,7 +29,7 @@ get_studies <- function() {
   
   # Data wrangling
   # Values that are vectors are flattened to strings
-  # All columns need to be unlisted: unlist used twice as Date re-introduces a list
+  # All columns need to be unlisted
   # Dates of the type month-year are converted to 1-month-year
   studies <- study_fields_df %>% 
                   rename(Country = LocationCountry) %>% 
@@ -37,10 +37,8 @@ get_studies <- function() {
                   mutate(Country = map(Country,conc_or_repl), Condition = map(Condition,conc_or_repl), StartDate = map(StartDate,conc_or_repl)) %>% 
                   run_on_df(unlist) %>% 
                   mutate(StartDate = ifelse(str_detect(StartDate, ","),StartDate,str_replace(StartDate, " ", " 1, "))) %>% 
-                  mutate(StartDate = as.Date(StartDate, format="%B %d, %Y")) %>%
-                  filter(StartDate > as.Date("31/12/2019", format="%d/%m/%Y")) %>% #TODO more robust solution
-                  mutate(StartMonth = lubridate::month(as_date(StartDate),label = TRUE)) %>% 
-                  run_on_df(unlist)
+                  mutate(StartMonth = as.yearmon(as.Date(StartDate, format="%B %d, %Y"))) %>% 
+                  filter(StartMonth > as.yearmon("2019-10"))
 }
 
 # Runs a given function on all columns of a dataframe
