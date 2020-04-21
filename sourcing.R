@@ -4,20 +4,31 @@ library(ggplot2)
 library(data.table)
 library(zoo)
 library(purrr)
+library(lgr)
 source("api.R")
 
 get_raw_studies <- function() {
   
-  study_fields_response <- get_studies_from_api(1,1000)
+  #max number of rows the API can return is 1000
+  response <- get_studies_from_api(1,1000)
   
-  #Repeat 
-  study_fields_response$NStudiesFound
+  raw_df <- extract_df(response)
+  number_of_studies <- response$StudyFieldsResponse$NStudiesFound
+  repeat_times <- number_of_studies %/% 1000
+  lgr$info(str_c("Number of studies: ", number_of_studies, ", will repeat API call ", repeat_times, " times."))
   
-  get_dataframe_from_response(study_fields_response)
+  #Repeat in batches of 1000
+  if (repeat_times>0) {
+    for (i in 1:repeat_times) {
+      raw_df <- rbind(raw_df, extract_df(get_studies_from_api(1+1000*i,1000+1000*i)))
+    }
+  }
+  
+  raw_df
 }
 
-get_dataframe_from_response <- function(study_fields_response) {
-  # Getting the dataframe which is nested in the response
+# Getting the dataframe which is nested in the response
+extract_df <- function(study_fields_response) {
   study_fields_df <- study_fields_response$StudyFieldsResponse$StudyFields
 }
 
