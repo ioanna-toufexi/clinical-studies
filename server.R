@@ -4,7 +4,7 @@ source("sourcing.R")
 
 function(input, output) {
   
-  raw_studies <- get_studies_from_api()
+  raw_studies <- get_raw_studies()
   studies <- wrangle_studies(raw_studies)
   
   initial_number <- nrow(raw_studies)

@@ -1,27 +1,22 @@
-library(httr)
-library(jsonlite)
 library(stringr)
 library(dplyr)
 library(ggplot2)
 library(data.table)
 library(zoo)
 library(purrr)
+source("api.R")
 
-base_url <- "https://www.clinicalTrials.gov/api/query/study_fields?fmt=JSON&expr=${expr}&min_rnk=${min_rnk}&max_rnk=${max_rnk}&fields=${fields}"
+get_raw_studies <- function() {
+  
+  study_fields_response <- get_studies_from_api(1,1000)
+  
+  #Repeat 
+  study_fields_response$NStudiesFound
+  
+  get_dataframe_from_response(study_fields_response)
+}
 
-get_studies_from_api <- function() {
-  expr <- "COVID-19"
-  min_rnk <- 1
-  max_rnk <- 1000 #TODO more than 1000 ranks
-  fields <- "OrgFullName,OrgClass,OfficialTitle,OverallStatus,StartDate,Condition,LocationCountry"
-  
-  get_studies_url <- str_interp(base_url)
-  
-  study_fields_response <-  GET(get_studies_url) %>% 
-    content(as="text") %>% 
-    str_remove_all("\n") %>% 
-    fromJSON(flatten = TRUE)
-  
+get_dataframe_from_response <- function(study_fields_response) {
   # Getting the dataframe which is nested in the response
   study_fields_df <- study_fields_response$StudyFieldsResponse$StudyFields
 }
