@@ -1,6 +1,7 @@
 library(shiny)
 library(ggplot2)
 library(stringr)
+library(shinycssloaders)
 
 attribution <- str_c("Data fetched from ClinicalTrials.gov API on ", format(Sys.time(), "%a %d %b %X "), Sys.timezone())
 
@@ -21,7 +22,7 @@ fluidPage(
       )
     ),
   mainPanel(
-    plotOutput('plot'),
-      htmlOutput('warning')
+    plotOutput('plot') %>% withSpinner(color="#0dc5c1"),
+    htmlOutput('warning')
   )
 )
