@@ -9,9 +9,7 @@ library(purrr)
 
 base_url <- "https://www.clinicalTrials.gov/api/query/study_fields?fmt=JSON&expr=${expr}&min_rnk=${min_rnk}&max_rnk=${max_rnk}&fields=${fields}"
 
-# Gets data from API and returns them after wrangling
-get_studies <- function() {
-  
+get_studies_from_api <- function() {
   expr <- "COVID-19"
   min_rnk <- 1
   max_rnk <- 1000 #TODO more than 1000 ranks
@@ -20,13 +18,16 @@ get_studies <- function() {
   get_studies_url <- str_interp(base_url)
   
   study_fields_response <-  GET(get_studies_url) %>% 
-                            content(as="text") %>% 
-                            str_remove_all("\n") %>% 
-                            fromJSON(flatten = TRUE)
+    content(as="text") %>% 
+    str_remove_all("\n") %>% 
+    fromJSON(flatten = TRUE)
   
   # Getting the dataframe which is nested in the response
   study_fields_df <- study_fields_response$StudyFieldsResponse$StudyFields
-  
+}
+
+# Gets data from API and returns them after wrangling
+wrangle_studies <- function(study_fields_df) {
   # Data wrangling
   # Values that are vectors are flattened to strings
   # All columns need to be unlisted

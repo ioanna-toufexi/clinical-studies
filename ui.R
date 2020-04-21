@@ -7,7 +7,6 @@ attribution <- str_c("Data fetched from ClinicalTrials.gov API on ", format(Sys.
 fluidPage(
   
   titlePanel("Demo Shiny app"),
-  
 
     p(attribution),
     p("Disclaimer:"),
@@ -22,7 +21,7 @@ fluidPage(
       )
     ),
   mainPanel(
-    plotOutput('plot')
+    plotOutput('plot'),
+      htmlOutput('warning')
   )
-    
 )

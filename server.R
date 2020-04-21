@@ -4,11 +4,18 @@ source("sourcing.R")
 
 function(input, output) {
   
-  studies <- get_studies()
+  raw_studies <- get_studies_from_api()
+  studies <- wrangle_studies(raw_studies)
+  
+  initial_number <- nrow(raw_studies)
+  final_number <- nrow(studies)
+  ommited_number <- initial_number - final_number
   
   type <- reactive({
     input$type
   })
+  
+  output$warning <- renderText(str_c("Total: ", initial_number, ", <font color=\"#FF0000\"><b>Had no start date: ", ommited_number, "</b></font>"))
   
   output$plot <- renderPlot({
     
