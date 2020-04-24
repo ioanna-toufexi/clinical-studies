@@ -1,6 +1,7 @@
 library(shiny)
 library(ggplot2)
 library(lubridate)
+library(zoo)
 source("sourcing.R")
 
 function(input, output) {
@@ -34,11 +35,21 @@ function(input, output) {
                   filter(highlight_flag) %>% 
                   filter(count == max(count)))$Country
   
+  no_data_number <-   (studies_per_country %>% 
+                                        filter(!highlight_flag))$count
+
   type <- reactive({
     input$type
   })
   
-  output$warning <- renderText(str_c("Total: ", initial_number, ", <font color=\"#FF0000\"><b>Had no start date: ", ommited_number, "</b></font>"))
+  output$warning <- reactive({
+    if (input$type=="StartMonth") {
+      str_c("<font color=\"#FF0000\"><b>There was no starting date for ", ommited_number, " out of ", initial_number, " studies.</b></font>")
+    }
+    else {
+      str_c("<font color=\"#FF0000\"><b>There was no country for ", no_data_number, " out of ", initial_number, " studies.</b></font>")
+    }
+  })
   
   output$plot <- renderPlot({
     
@@ -52,11 +63,10 @@ function(input, output) {
         theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
         labs(y= "Number of studies", 
              x = "Start month", 
-             title = str_c(month(as.Date(top_month), label=TRUE, abbr = FALSE), 
+             title = str_c(lubridate::month(as.Date(top_month), label=TRUE, abbr = FALSE), 
                            " ", 
                            year(as.Date(top_month)), 
-                           " is the month with the most COVID-19 clinical trials starting"),
-             subtitle = "No starting date data for a few studies",
+                           " is the month with the most new COVID-19 clinical trials"),
              caption = "Data from clinicaltrials.gov"
              
              )
@@ -71,11 +81,10 @@ function(input, output) {
         theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position="none") +
         labs(y= "Number of studies", 
              x = "Country", 
-             title = str_c(top_country," is the country involved in the most COVID-19 clinical trials, including appearances in multi-country collaborations."),
-             subtitle = "No country data for a lot of studies potentially skews the results.",
-             caption = "Data from clinicaltrials.gov"
-             
-             )}
+             title = str_c(top_country," is the country involved in the most COVID-19 clinical trials"),
+             subtitle = "Includes appearances in multi-country collaborations",
+             caption = "Data from clinicaltrials.gov")
+      }
   })
   
 }
