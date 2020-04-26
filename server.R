@@ -17,6 +17,21 @@ function(input, output) {
     group_by(StartMonth) %>%
     summarise(count = n())
   
+  all_dates = seq(as.Date(min(studies_per_month$StartMonth)), as.Date(max(studies_per_month$StartMonth)), by="month")
+  
+  studies_per_month <- studies_per_month %>% mutate(StartMonth = as.Date(StartMonth))
+  
+  studies_by_date_clean = merge(data.frame(date = all_dates),
+                              studies_per_month,
+                              by.x='date',
+                              by.y='StartMonth',
+                              all.x=T,
+                              all.y=T)
+  
+  studies_by_date_clean <- studies_by_date_clean %>% 
+    mutate(date = as.yearmon(date)) %>% 
+    mutate(count = ifelse(is.na(count),0,count))
+  
   top_month <- (studies_per_month %>% 
                 filter(count == max(count)))$StartMonth
   
