@@ -21,15 +21,15 @@ function(input, output) {
   
   studies_per_month <- studies_per_month %>% mutate(StartMonth = as.Date(StartMonth))
   
-  studies_by_date_clean = merge(data.frame(date = all_dates),
+  studies_by_date_clean = base::merge(data.frame(StartMonth = all_dates),
                               studies_per_month,
-                              by.x='date',
+                              by.x='StartMonth',
                               by.y='StartMonth',
                               all.x=T,
                               all.y=T)
   
   studies_by_date_clean <- studies_by_date_clean %>% 
-    mutate(date = as.yearmon(date)) %>% 
+    mutate(StartMonth = as.yearmon(StartMonth)) %>% 
     mutate(count = ifelse(is.na(count),0,count))
   
   top_month <- (studies_per_month %>% 
@@ -70,10 +70,11 @@ function(input, output) {
     
     #TODO add empty months
     if(type()=="StartMonth") {
-      studies_per_month %>% 
-        ggplot() +
-        geom_bar(aes(x = as.factor(StartMonth),
-                            y = count), fill="blue", stat = "identity") +
+      studies_by_date_clean %>% 
+        ggplot(aes(x = as.factor(StartMonth),
+                   y = count)) +
+        geom_bar(fill="blue", stat = "identity") +
+        geom_text(aes(label=count), position=position_dodge(width=0.9), vjust=-0.25) +
         theme_minimal() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
         labs(y= "Number of studies", 
@@ -89,9 +90,10 @@ function(input, output) {
     else {
       
       studies_per_country %>% 
-      ggplot() +
-        geom_bar(aes(x = reorder(Country, -count),
-                     y = count, fill=highlight_flag), stat = "identity") +
+      ggplot(aes(x = reorder(Country, -count),
+                 y = count)) +
+        geom_bar(aes(fill=highlight_flag), stat = "identity") +
+        geom_text(aes(label=count), position=position_dodge(width=0.9), vjust=-0.25) +
         theme_minimal() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position="none") +
         labs(y= "Number of studies", 
