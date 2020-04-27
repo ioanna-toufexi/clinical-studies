@@ -98,7 +98,7 @@ function(input, output) {
         theme_minimal() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position="none") +
         labs(y= "Number of studies", 
-             x = "Country", 
+             x = "Country (top 20)", 
              title = str_c(top_country," is the country involved in the most COVID-19 clinical trials"),
              subtitle = "Includes appearances in multi-country collaborations",
              caption = "Data from clinicaltrials.gov")
