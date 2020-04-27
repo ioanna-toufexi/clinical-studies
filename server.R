@@ -3,6 +3,7 @@ library(ggplot2)
 library(lubridate)
 library(zoo)
 source("sourcing.R")
+source("helper.R")
 
 function(input, output) {
   
@@ -17,20 +18,7 @@ function(input, output) {
     group_by(StartMonth) %>%
     summarise(count = n())
   
-  all_dates = seq(as.Date(min(studies_per_month$StartMonth)), as.Date(max(studies_per_month$StartMonth)), by="month")
-  
-  studies_per_month <- studies_per_month %>% mutate(StartMonth = as.Date(StartMonth))
-  
-  studies_by_date_clean = base::merge(data.frame(StartMonth = all_dates),
-                              studies_per_month,
-                              by.x='StartMonth',
-                              by.y='StartMonth',
-                              all.x=T,
-                              all.y=T)
-  
-  studies_by_date_clean <- studies_by_date_clean %>% 
-    mutate(StartMonth = as.yearmon(StartMonth)) %>% 
-    mutate(count = ifelse(is.na(count),0,count))
+  studies_per_month <- addMissingMonths(studies_per_month)
   
   top_month <- (studies_per_month %>% 
                 filter(count == max(count)))$StartMonth
@@ -70,7 +58,7 @@ function(input, output) {
     
     #TODO add empty months
     if(type()=="StartMonth") {
-      studies_by_date_clean %>% 
+      studies_per_month %>% 
         ggplot(aes(x = as.factor(StartMonth),
                    y = count)) +
         geom_bar(fill="blue", stat = "identity") +
