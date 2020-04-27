@@ -1,4 +1,7 @@
+# Adds months to the dataframe that have no studies 
+# and are between months with studies
 addMissingMonths <- function(studies_per_month) {
+  
   all_dates = seq(as.Date(min(studies_per_month$StartMonth)), as.Date(max(studies_per_month$StartMonth)), by="month")
   
   studies_per_month <- studies_per_month %>% mutate(StartMonth = as.Date(StartMonth))
